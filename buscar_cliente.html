@@ -1,0 +1,89 @@
+
+<script type="text/javascript">
+
+    var db;
+    function init() {
+        db = openDatabase("DB Prueba", "0.1", "Database Prueba", 1);
+        if (db) {
+            // Database opened
+            db.transaction( function(tx) {
+                tx.executeSql("CREATE TABLE IF NOT EXISTS recibos(recibosid integer primary key autoincrement, clientes_id integer, cliente_nombre text, concepto_id integer, concepto_descripcion text, monto real)")
+            });
+        }
+    }
+
+    $consultaBusqueda = $_POST['valorBusqueda'];
+
+    $mensaje = "";
+
+    if (isset($consultaBusqueda)) {
+        db.transaction( function(tx) {
+            tx.executeSql("SELECT * FROM cliente876543210 where dni LIKE  '$consultaBusqueda'", [],
+                    function(tx, result){
+                        var output = [];
+
+                        if (output == 0){
+                            $mensaje = "<p>No hay ningún cliente con este DNI</p>";
+                        }
+                        else{
+
+                            for(var i=0; i < result.rows.length; i++) {
+                                output.push([result.rows.item(i)['userid'],
+                                    result.rows.item(i)['nombres'],
+                                    result.rows.item(i)['apellidos'],
+                                    result.rows.item(i)['dni'],
+                                    result.rows.item(i)['empresa']/]);
+                                $mensaje = output;
+                            }
+
+                        }
+
+
+                    });
+        });
+    };
+
+
+    function showUsers(users) {
+        var place = document.getElementById("usersDiv");
+        if (place.getElementsByTagName("ul").length > 0 )
+            place.removeChild(place.getElementsByTagName("ul")[0]);
+        var list = document.createElement("ul");
+
+        for ( var i = 0; i < users.length; i++) {
+            var item = document.createElement("li");
+            item.innerHTML += "<b>Registro #:</b>" + users[i][0] +
+                    " </br><b> Nombres:</b>"   + users[i][1] +
+                    " <b> Apellidos: </b>" + users[i][2] +
+                    " <b> DNI: </b>" + users[i][3] +
+                    " <b> Empresa: </b>" + users[i][4] +
+                    /*" <b> Direccion: </b>" + users[i][5] +*/
+                    "<button onclick='removeUser("+ users[i][0]+")'>Eliminar</button>";
+            list.appendChild(item);
+        }
+        place.appendChild(list);
+    }
+
+
+    /*function listUsers() {
+        db.transaction( function(tx) {
+            tx.executeSql("SELECT * FROM cliente876543210", [],
+                    function(tx, result){
+                        var output = [];
+                        for(var i=0; i < result.rows.length; i++) {
+                            output.push([result.rows.item(i)['userid'],
+                                result.rows.item(i)['nombres'],
+                                result.rows.item(i)['apellidos'],
+                                result.rows.item(i)['dni'],
+                                result.rows.item(i)['empresa']
+                                /!*result.rows.item(i)['direccion']*!/]);
+                        }
+                        showUsers(output);
+                    });
+        });
+    }*/
+
+</script>
+<div class="inner" id="resultadoBusquedaCliente">
+
+</div>
