@@ -35,7 +35,7 @@ change the version parameter on line:
     nova.data.DbContext.call(...);
 */
 DemoDbContext = function () {
-    nova.data.DbContext.call(this, "recibos3", 1, "recibos3", 1000001);
+    nova.data.DbContext.call(this, "recibos4", 1, "recibos4", 1000001);
    // nova.data.DbContext.call(this, "DB Prueba", 0.1, "Database Prueba", 1);
 
     this.logSqls = true;
@@ -43,6 +43,7 @@ DemoDbContext = function () {
     this.users = new nova.data.Repository(this, User, "users");
     this.clientes = new nova.data.Repository(this, Cliente, "clientes");
     this.recibos = new nova.data.Repository(this, Recibo, "recibos");
+    this.conceptos = new nova.data.Repository(this, Concepto, "conceptos");
 };
 
 DemoDbContext.prototype = new nova.data.DbContext();
@@ -519,7 +520,7 @@ ReciboService.prototype = {
                 obj.reset();
             });
             $(".btn-delete").live("click", function() {
-                obj.deleteCliente(this);
+                obj.deleteRecibo(this);
             });
             $(".btn-edit").live("click", function() {
                 obj.edit(this);
@@ -529,10 +530,7 @@ ReciboService.prototype = {
                 service.getAll(function(clientes) {
                     var html1 = "";
                     for (var i = 0; i < clientes.length; i++) {
-
-                        //alert(clientes.id);
-                        html1 += '<td>' + clientes.id + '</td>'
-                       // html1 += '<option value="' + i + '">' + i  + ' Traer nombre</option>';
+                      html1 += '<option value="' + i + '">' + i  + ' Traer nombre</option>';
                         //html += obj.createRowHtml_cliente(clientes[i]);
                     }
                     $("#txtcliente_id").html(html1);
@@ -634,3 +632,165 @@ ReciboService.prototype = {
     };
 })();
 
+
+
+////////////////////////******* CONCEPTOS **********/////////////////////
+
+var Concepto = function () {
+    nova.data.Entity.call(this);
+    this.nomconcepto = "";
+    this.descripcion = "";
+};
+
+Concepto.prototype = new nova.data.Entity();
+Concepto.constructor = Concepto;
+
+Concepto.prototype.updateFrom = function(concepto) {
+    this.nomconcepto = concepto.nomconcepto;
+    this.descripcion = concepto.descripcion;
+};
+
+var ConceptoService = function() {
+};
+
+ConceptoService.prototype = {
+    getAll: function (callback) {
+        demo.db.getInstance().conceptos.toArray(callback);
+    },
+    add:function(concepto, callback) {
+        var db = demo.db.getInstance();
+        //cliente.lastUpdatedTime = null;
+        db.conceptos.add(concepto);
+        db.saveChanges(callback);
+    },
+    deleteConcepto:function(id, callback) {
+        var db = demo.db.getInstance();
+        db.conceptos.removeByWhere("id=" + id, callback);
+    },
+    update:function(concepto, callback) {
+        var db = demo.db.getInstance();
+        db.recibos.where("id=" + recibo.id).firstOrDefault(function(dbConceptos) {
+            dbConceptos.updateFrom(concepto);
+            db.conceptos.update(dbConceptos);
+            db.saveChanges(function() {
+                //cliente.lastUpdatedTime = dbCliente.lastUpdatedTime;
+                callback && callback();
+            });
+        });
+    },
+    get:function(id, callback) {
+        demo.db.getInstance().conceptos.firstOrDefault(callback, "id=" + id);
+    }
+};
+
+(function() {
+    demo.pages.Conceptos = function() {
+
+    };
+
+    demo.pages.Conceptos.prototype = {
+        onLoaded: function() {
+            var obj = this;
+            $("#btnAdd").click(function() {
+                obj.add();
+            });
+            $("#btnUpdate").click(function() {
+                obj.update();
+            });
+            $("#btnCancel").click(function() {
+                obj.reset();
+            });
+            $(".btn-delete").live("click", function() {
+                obj.deleteConcepto(this);
+            });
+            $(".btn-edit").live("click", function() {
+                obj.edit(this);
+            });
+
+            this.loadConceptos();
+        },
+
+
+        loadConceptos: function() {
+            var obj = this;
+            var service = new ConceptoService();
+            service.getAll(function(conceptos) {
+                var html = "";
+                for (var i = 0; i < conceptos.length; i++) {
+                    html += obj.createRowHtml(conceptos[i]);
+                }
+                $("#conceptos").html(html);
+            });
+        },
+        parseConcepto: function() {
+            var concepto = new Concepto();
+            concepto.id = $("#hfId").val() * 1;
+            concepto.nomconcepto = $("#txt_nombre_concepto").val();
+            concepto.descripcion = $("#txt_descripcion").val();
+            return concepto;
+        },
+        bindForm: function (concepto) {
+            $("#hfId").val(concepto.id);
+            $("#txt_nombre_concepto").val(concepto.nomconcepto);
+            $("#txt_descripcion").val(concepto.descripcion);
+        },
+        createRowHtml: function(concepto) {
+            var html = '<tr data-id=' + concepto.id + '>\
+                            <td>' + concepto.nomconcepto + '</td>\
+                            <td>' + concepto.descripcion + '</td>\
+                            <td>\
+                                <input type="button" value="edit" class="btn-edit"/>\
+                                <input type="button" value="delete" class="btn-delete"/>\
+                            </td>\
+                        </tr>';
+            return html;
+        },
+
+        add: function() {
+            var obj = this;
+            var concepto = this.parseConcepto();
+            var service = new ConceptoService();
+            service.add(concepto, function() {
+                $("#conceptos").append(obj.createRowHtml(concepto));
+                obj.reset();
+            });
+        },
+        update: function() {
+            var obj = this;
+            var service = new ConceptoService();
+            var concepto = this.parseConcepto();
+            service.update(concepto, function() {
+                var $tr = $('tr[data-id="' + concepto.id + '"]');
+                $tr.replaceWith(obj.createRowHtml(concepto));
+                obj.reset();
+                $("#formEdit")[0].reset();
+            });
+        },
+        reset: function() {
+            $("#txt_nombre_concepto").val("");
+            $("#txt_descripcion").val("");
+            $("#btnAdd").show();
+            $("#btnUpdate, #btnCancel").hide();
+        },
+        edit: function(sender) {
+            var id = $(sender).closest("tr").attr("data-id");
+            var obj = this;
+            var service = new ConceptoService();
+            service.get(id, function(concepto) {
+                obj.bindForm(concepto);
+                $("#btnAdd").hide();
+                $("#btnUpdate, #btnCancel").show();
+            });
+        },
+        deleteConcepto: function(sender) {
+            if (!confirm("Esta seguro que desea eliminar este registro?")) {
+                return;
+            }
+            var id = $(sender).closest("tr").attr("data-id");
+            var service = new ConceptoService();
+            service.deleteConcepto(id, function() {
+                $(sender).closest("tr").remove();
+            });
+        }
+    };
+})();

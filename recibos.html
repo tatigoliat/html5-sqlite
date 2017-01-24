@@ -51,15 +51,23 @@
             <div>
                 <input type="hidden" name="id" value="0" id="hfId"/>
 
-                <td>Seleccione un cliente: <select id="txtcliente_id" name="txtcliente_id"></select></td>
+                <!--<td>Seleccione un cliente: <select id="txtcliente_id" name="txtcliente_id"></select></td>-->
 
                 <div>
-                    <input type="date" id="txtfecha" name="txtfecha" placeholder="Monto Concepto 1">
+                  Ingrese una fecha  <input type="date" id="txtfecha" name="txtfecha" placeholder="Monto Concepto 1">
+                    <input type="text" id="txtcliente_id" name="txtcliente_id" placeholder="txtcliente_id">
                 </div>
 
 
                 <div class="ccfield-prepend">
                     <span class="ccform-addon"><i class="fa fa-check-square fa-2x"></i></span>
+                    <input class="ccformfield"  type="text" id="txtdomicilio" placeholder="Monto txtdomicilio 1" required="required">
+                </div>
+
+
+                <div class="ccfield-prepend">
+                    <span class="ccform-addon"><i class="fa fa-check-square fa-2x"></i></span>
+                    <input class="ccformfield"  type="text" id="txtcliente_id" placeholder="txtcliente_id 1" required="required">
                     <input class="ccformfield"  type="text" id="txtdomicilio" placeholder="Monto txtdomicilio 1" required="required">
                 </div>
 
