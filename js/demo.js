@@ -659,7 +659,6 @@ ConceptoService.prototype = {
     },
     add:function(concepto, callback) {
         var db = demo.db.getInstance();
-        //cliente.lastUpdatedTime = null;
         db.conceptos.add(concepto);
         db.saveChanges(callback);
     },
@@ -669,11 +668,10 @@ ConceptoService.prototype = {
     },
     update:function(concepto, callback) {
         var db = demo.db.getInstance();
-        db.recibos.where("id=" + recibo.id).firstOrDefault(function(dbConceptos) {
+        db.concepto.where("id=" + concepto.id).firstOrDefault(function(dbConceptos) {
             dbConceptos.updateFrom(concepto);
             db.conceptos.update(dbConceptos);
             db.saveChanges(function() {
-                //cliente.lastUpdatedTime = dbCliente.lastUpdatedTime;
                 callback && callback();
             });
         });
@@ -739,7 +737,6 @@ ConceptoService.prototype = {
                             <td>' + concepto.nomconcepto + '</td>\
                             <td>' + concepto.descripcion + '</td>\
                             <td>\
-                                <input type="button" value="edit" class="btn-edit"/>\
                                 <input type="button" value="delete" class="btn-delete"/>\
                             </td>\
                         </tr>';

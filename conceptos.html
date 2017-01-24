@@ -9,173 +9,108 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-   <script src="assets/js/ie/html5shiv.js"></script>
+    <script src="assets/js/ie/html5shiv.js"></script>
     <link rel="stylesheet" href="assets/css/main.css" />
     <link rel="stylesheet" href="assets/css/ie9.css" />
     <link rel="stylesheet" href="assets/css/ie8.css" />
     <link href="assets/css/form.css" rel="stylesheet">
-    <script type="text/javascript">
-        var db;
-        function init() {
-            db = openDatabase("DB Prueba", "0.1", "Database Prueba", 1);
-            if (db) {
-                // Database opened
-                db.transaction( function(tx) {
-                    tx.executeSql("CREATE TABLE IF NOT EXISTS conceptos(userid integer primary key autoincrement, username text, password text)")
-
-                });
-            }
-            listUsers();
-            listClientes();
-
-        }
-
-        function showUsers(users) {
-            var place = document.getElementById("usersDiv");
-            if (place.getElementsByTagName("ul").length > 0 )
-                place.removeChild(place.getElementsByTagName("ul")[0]);
-            var list = document.createElement("ul");
-
-            for ( var i = 0; i < users.length; i++) {
-                var item = document.createElement("li");
-                item.innerHTML += "<b>Registro #:</b>" + users[i][0] + " </br><b> Nombre:</b>"
-                        + users[i][1] + " <b> Descripcion: </b>" + users[i][2] +
-                        "<button onclick='removeUser("+ users[i][0]+")'>Eliminar</button>";
-                list.appendChild(item);
-            }
-            place.appendChild(list);
-        }
-
-        function showClientes(client) {
-            var place = document.getElementById("ClientesDiv");
-            if (place.getElementsByTagName("ul").length > 0 )
-                place.removeChild(place.getElementsByTagName("ul")[0]);
-            var list = document.createElement("ul");
-
-            for ( var i = 0; i < client.length; i++) {
-                var item = document.createElement("li");
-                item.innerHTML += "<b>Concepto ID:</b>" + client[i][0] + " <b>DNI:</b>"
-                        + client[i][1] + " <b>NOMBRES:</b>" + client[i][2] +
-                        "<button onclick='removeUser("+ client[i][0]+")'>Remove</button>";
-                list.appendChild(item);
-            }
-            place.appendChild(list);
-        }
-
-        function listUsers() {
-            db.transaction( function(tx) {
-                tx.executeSql("SELECT * FROM conceptos", [],
-                        function(tx, result){
-                            var output = [];
-                            for(var i=0; i < result.rows.length; i++) {
-                                output.push([result.rows.item(i)['userid'],
-                                    result.rows.item(i)['username'],
-                                    result.rows.item(i)['password']]);
-                            }
-
-                            showUsers(output);
-
-                        });
-            });
-        }
-
-
-        function listClientes() {
-            db.transaction( function(tx) {
-                tx.executeSql("SELECT * FROM clientes", [],
-                        function(tx, result){
-                            var output = [];
-                            for(var i=0; i < result.rows.length; i++) {
-                                output.push([result.rows.item(i)['clientesid'],
-                                    result.rows.item(i)['dni'],
-                                    result.rows.item(i)['nombres']]);
-                            }
-
-                            showClientes(output);
-
-                        });
-            });
-        }
-        function addUser(username, password) {
-            db.transaction( function(tx) {
-                tx.executeSql("INSERT INTO conceptos(username, password) VALUES(?,?)", [username, password]);
-            });
-            listUsers();
-        }
-
-        function addClientes(dni, nombres) {
-            db.transaction( function(tx) {
-               tx.executeSql("INSERT INTO clientes(dni, nombres) VALUES(?,?)", [dni, nombres]);
-            });
-            listClientes();
-        }
-
-        function removeUser(userId) {
-            db.transaction(function(tx) {
-                tx.executeSql("DELETE FROM conceptos WHERE userId=?",[userId], listUsers);
-            })
-        }
-    </script>
+    <script src="js/jquery-1.7.2.min.js"></script>
+    <script src="js/nova.data.js"></script>
+    <script src="js/demo.js"></script>
 </head>
-<body onload="init()">
+
+<body>
 
 <section id="sidebar">
     <div class="inner">
         <nav>
             <ul>
                 <li><a href="index.html">Bienvenido</a></li>
-                <li><a href="#one">Configuración</a></li>
-                <li><a href="#two">Recibos</a></li>
             </ul>
         </nav>
     </div>
 </section>
 
-    <div id="wrapper">
-          <section id="intro" class="wrapper style1 fullscreen fade-up">
-            <div class="inner">
-                <h1>Registro de Conceptos</h1>
-                <p>Ingrese la información requerida</p>
-                <ul class="actions">
-                    <li><a href="index.html" class="button scrolly">Volver</a></li>
-                </ul>
-            </div>
+<div id="wrapper">
 
+    <section id="intro" class="wrapper style1 fullscreen fade-up">
+        <div class="inner">
+            <h1>Registro de Clientes</h1>
+            <p>Ingrese la información requerida</p>
+            <ul class="actions">
+                <li><a href="index.html" class="button scrolly">Volver</a></li>
+            </ul>
+        </div>
+
+        Crear nuevo Concepto<br/>
+
+        <form action="/" method="POST" id="formEdit">
             <div class="wrapper" id="newuser">
-                Crear nuevo Concepto<br/>
+                <input type="hidden" name="id" value="0" id="hfId"/>
+
                 <div class="ccfield-prepend">
-                    <span class="ccform-addon"><i class="fa fa-user fa-2x"></i></span>
-                    <input class="ccformfield" type="text" id="username" placeholder="Nombre del Concepto" required>
+                    <span><i class="fa fa-user fa-2x"></i></span>
+                    <input type="text" id="txt_nombre_concepto" placeholder="Nombre del Concepto" required>
                 </div>
                 <div class="ccfield-prepend">
-                    <span class="ccform-addon"><i class="fa fa-user fa-2x"></i></span>
-                    <input class="ccformfield" type="text" id="password" placeholder="Breve descripcion" required>
+                    <span><i class="fa fa-user fa-2x"></i></span>
+                    <input type="text" id="txt_descripcion" placeholder="Breve descripcion" required>
                 </div>
-                <div class="ccfield-prepend">
-                <button onclick="addUser(username.value, password.value)">Guardar</button>
+
+                <div>
+                    <input type="button" value="Add" id="btnAdd"/>
+                    <!--<input type="button" value="Update" id="btnUpdate" class="hide"/>-->
+                    <input type="reset" value="Cancel" id="btnCancel" class="hide"/>
                 </div>
             </div>
-              <div class="inner" id="usersDiv">
 
-              </div>
-    </div>
+        </form>
+
+        <table class="data">
+            <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Descripcion</th>
+
+            </tr>
+            </thead>
+            <tbody id="conceptos">
+            <tr>
+                <td> - </td>
+                <td> - </td>
+                 <td>
+                    <!--<input type="button" value="edit" class="btn-edit"/>-->
+                    <input type="button" value="delete" class="btn-delete"/>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+</div>
+
+</div>
 
 <footer id="footer" class="wrapper style1-alt">
     <div class="inner">
         <ul class="menu">
-            <li>Untitled. All rights reserved.</li><li>Design: <a href="http://roufet.com">Roufet.com</a></li>
+            <li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://roufet.com">Roufet.com</a></li>
         </ul>
     </div>
 </footer>
 
 </body>
-<script src="assets/js/jquery.min.js"></script>
-<script src="assets/js/jquery.scrollex.min.js"></script>
-<script src="assets/js/jquery.scrolly.min.js"></script>
-<script src="assets/js/skel.min.js"></script>
-<script src="assets/js/util.js"></script>
-<script src="assets/js/ie/respond.min.js"></script>
-<script src="assets/js/main.js"></script>
-
-</body>
+<script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+        demo.db.init(function () {
+            new demo.pages.Conceptos().onLoaded();
+        });
+    });
+</script>
 </html>
+
+
+
+
+
+
+
+
