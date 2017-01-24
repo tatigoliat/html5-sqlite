@@ -481,9 +481,9 @@ ReciboService.prototype = {
         db.recibos.add(recibo);
         db.saveChanges(callback);
     },
-    deleteCliente:function(id, callback) {
+    deleteRecibo:function(id, callback) {
         var db = demo.db.getInstance();
-        db.clientes.removeByWhere("id=" + id, callback);
+        db.recibos.removeByWhere("id=" + id, callback);
     },
     update:function(recibo, callback) {
         var db = demo.db.getInstance();
@@ -525,13 +525,19 @@ ReciboService.prototype = {
                 obj.edit(this);
             });
 
-            var thisYear = new Date().getFullYear();
-            var yearsHtml = "";
-            for (var i = thisYear; i > thisYear - 100; i--) {
-                yearsHtml += '<option value="' + i + '">' + i + '</option>';
-            }
+                var service = new ClienteService();
+                service.getAll(function(clientes) {
+                    var html1 = "";
+                    for (var i = 0; i < clientes.length; i++) {
 
-            $("#ddlYears").html(yearsHtml);
+                        //alert(clientes.id);
+                        html1 += '<td>' + clientes.id + '</td>'
+                       // html1 += '<option value="' + i + '">' + i  + ' Traer nombre</option>';
+                        //html += obj.createRowHtml_cliente(clientes[i]);
+                    }
+                    $("#txtcliente_id").html(html1);
+                });
+
             this.loadRecibos();
         },
 

@@ -11,9 +11,9 @@
 
     <script src="assets/js/ie/html5shiv.js"></script>
     <link rel="stylesheet" href="assets/css/main.css" />
-    <link rel="stylesheet" href="assets/css/ie9.css" />
-    <link rel="stylesheet" href="assets/css/ie8.css" />
-    <link href="assets/css/form.css" rel="stylesheet">
+    <!--<link rel="stylesheet" href="assets/css/ie9.css" />-->
+    <!--<link rel="stylesheet" href="assets/css/ie8.css" />-->
+    <!--<link href="assets/css/form.css" rel="stylesheet">-->
     <script src="js/jquery-1.7.2.min.js"></script>
     <script src="js/nova.data.js"></script>
     <script src="js/demo.js"></script>
@@ -34,7 +34,7 @@
 
 <div id="wrapper">
 
-    <section id="intro" class="wrapper style1 fullscreen fade-up">
+    <section id="intro" class="wrapper style1 fade-up">
         <div class="inner">
             <h1>Registro de Clientes</h1>
             <p>Ingrese la información requerida</p>
@@ -43,36 +43,29 @@
             </ul>
         </div>
 
+
+        <h3>Crear nuevo Recibo</h3>
+        <br/>
+
         <form action="/" method="POST" id="formEdit">
-            <div class="wrapper" id="newuser">
+            <div>
                 <input type="hidden" name="id" value="0" id="hfId"/>
 
-                <h3>Crear nuevo Recibo</h3>
-                <br/>
+                <td>Seleccione un cliente: <select id="txtcliente_id" name="txtcliente_id"></select></td>
 
-                <div class="ccfield-prepend">
-                    <span class="ccform-addon"></span>
-                    <input type="date" name="fecha" placeholder="Monto Concepto 1">
+                <div>
+                    <input type="date" id="txtfecha" name="txtfecha" placeholder="Monto Concepto 1">
                 </div>
 
 
-                <div class="ccfield-prepend"><i class="fa fa-user fa-2x"></i>Seleccione un Cliente
-                <select>
-                    <option value="1">Cliente 1</option>
-                    <option value="2">Cliente 2</option>
-                    <option value="3">Cliente 3</option>
-                </select>
+                <div class="ccfield-prepend">
+                    <span class="ccform-addon"><i class="fa fa-check-square fa-2x"></i></span>
+                    <input class="ccformfield"  type="text" id="txtdomicilio" placeholder="Monto txtdomicilio 1" required="required">
                 </div>
 
                 <div class="ccfield-prepend">
                     <span class="ccform-addon"><i class="fa fa-check-square fa-2x"></i></span>
-                    <input class="ccformfield"  type="text" id="username" placeholder="Concepto 1" required="required">
-                    <input class="ccformfield"  type="text" id="username" placeholder="Monto Concepto 1" required="required">
-                </div>
-
-                <div class="ccfield-prepend">
-                    <span class="ccform-addon"><i class="fa fa-check-square fa-2x"></i></span>
-                    <input class="ccformfield"  type="text" id="username" placeholder="Concepto 2" required="required">
+                    <input class="ccformfield"  type="text" id="txtmonto" placeholder="txtmonto 2" required="required">
                     <input class="ccformfield"  type="text" id="username" placeholder="Monto Concepto 2" required="required">
                 </div>
 
@@ -85,7 +78,7 @@
 
                 <div class="ccfield-prepend">
                     <span class="ccform-addon"><i class="fa fa-user fa-2x"></i></span>
-                    <input class="ccformfield" type="text" id="apellidos" placeholder="Monto Total" READONLY>
+                    <input class="ccformfield" type="text" id="txtmonto" placeholder="Monto Total" READONLY>
                 </div>
 
 
@@ -107,7 +100,7 @@
                 <th>Total</th>
             </tr>
             </thead>
-            <tbody id="clientes">
+            <tbody id="recibos">
             <tr>
                 <td> - </td>
                 <td> - </td>
