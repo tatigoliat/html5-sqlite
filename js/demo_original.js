@@ -30,12 +30,12 @@ Date.prototype.display = function() {
 })();
 
 
-/* if you want to re-create the DB(due to schema changes, re-init sample data, etc.),
+/* if you want to re-create the DB(due to schema changes, re-init sample data, etc.), 
 change the version parameter on line:
     nova.data.DbContext.call(...);
 */
 DemoDbContext = function () {
-    nova.data.DbContext.call(this, "recibos0", 1, "recibos0", 1000001);
+    nova.data.DbContext.call(this, "recibos4", 1, "recibos4", 1000001);
    // nova.data.DbContext.call(this, "DB Prueba", 0.1, "Database Prueba", 1);
 
     this.logSqls = true;
@@ -44,8 +44,6 @@ DemoDbContext = function () {
     this.clientes = new nova.data.Repository(this, Cliente, "clientes");
     this.recibos = new nova.data.Repository(this, Recibo, "recibos");
     this.conceptos = new nova.data.Repository(this, Concepto, "conceptos");
-    this.recibosconceptos = new nova.data.Repository(this, Recibosconceptos, "recibosconceptos");
-
 };
 
 DemoDbContext.prototype = new nova.data.DbContext();
@@ -167,9 +165,15 @@ UserService.prototype = {
             var service = new UserService();
             service.getAll(function(users) {
                 var html = "";
+                /*for (var i = 0; i < users.length; i++) {
+                    html += obj.createRowHtml(users[i]);
+                }*/
                 for (var i = 0; i < users.length; i++) {
+                    //html += '<option value="' + i + '">' + users.username.val() + '</option>';
                     html += '<option value="' + i + '">' + i + '</option>';
                 }
+
+
                 $("#users").html(html);
             });
         },
@@ -183,7 +187,7 @@ UserService.prototype = {
         },
         bindForm: function (user) {
             $("#hfId").val(user.id);
-            $("#nombres").val(user.username);
+            $("#txtUsername").val(user.username);
             $("#ddlYears").val(user.birthYear);
             $("#ddlDisabled").val(user.isDisabled);
         },
@@ -270,7 +274,7 @@ Cliente.prototype = new nova.data.Entity();
 Cliente.constructor = Cliente;
 
 Cliente.prototype.updateFrom = function(cliente) {
-    this.nombres = cliente.nombres;
+    this.username = cliente.username;
     this.apellidos = cliente.apellidos;
     this.dni = cliente.dni;
     this.empresa = cliente.empresa;
@@ -360,7 +364,7 @@ ClienteService.prototype = {
         parseCliente: function() {
             var cliente = new Cliente();
             cliente.id = $("#hfId").val() * 1;
-            cliente.nombres = $("#nombres").val();
+            cliente.nombres = $("#username").val();
             cliente.apellidos = $("#apellidos").val();
             cliente.dni = $("#dni").val();
             cliente.empresa = $("#empresa").val();
@@ -369,7 +373,7 @@ ClienteService.prototype = {
         },
         bindForm: function (cliente) {
             $("#hfId").val(cliente.id);
-            $("#nombres").val(cliente.nombres);
+            $("#username").val(cliente.nombres);
             $("#apellidos").val(cliente.apellidos);
             $("#dni").val(cliente.dni);
             $("#empresa").val(cliente.empresa);
@@ -412,7 +416,7 @@ ClienteService.prototype = {
             });
         },
         reset: function() {
-            $("#nombres").val("");
+            $("#username").val("");
             $("#apellidos").val("");
             $("#dni").val("");
             $("#empresa").val("");
@@ -441,6 +445,8 @@ ClienteService.prototype = {
         }
     };
 })();
+
+
 
 
 ////////////////////**********  RECIBOS ********** //////////////////
@@ -519,19 +525,16 @@ ReciboService.prototype = {
             $(".btn-edit").live("click", function() {
                 obj.edit(this);
             });
-            $(".btn-imp").live("click", function() {
-                obj.imp(this);
-            });
 
                 var service = new ClienteService();
                 service.getAll(function(clientes) {
-                var html1 = "";
-                for (var i = 0; i < clientes.length; i++) {
-                    //html1 += '<option value="' + i + '">' + i  + ' Traer nombre</option>';
-                    html1 += obj.createRowHtml_cliente(clientes[i]);
-                }
-                $("#txtcliente_id").html(html1);
-            });
+                    var html1 = "";
+                    for (var i = 0; i < clientes.length; i++) {
+                      html1 += '<option value="' + i + '">' + i  + ' Traer nombre</option>';
+                        //html += obj.createRowHtml_cliente(clientes[i]);
+                    }
+                    $("#txtcliente_id").html(html1);
+                });
 
             this.loadRecibos();
         },
@@ -552,7 +555,6 @@ ReciboService.prototype = {
             var recibo = new Recibo();
             recibo.id = $("#hfId").val() * 1;
             recibo.cliente_id = $("#txtcliente_id").val();
-            //<td>' + recibo.cliente_id + '</td>\
             recibo.domicilio = $("#txtdomicilio").val();
             recibo.fecha = $("#txtfecha").val();
             recibo.monto_total = $("#txtmonto").val();
@@ -573,15 +575,9 @@ ReciboService.prototype = {
                             <td>' + recibo.monto_total + '</td>\
                             <td>\
                                 <input type="button" value="edit" class="btn-edit"/>\
-                                <input type="button" value="Imprimir" class="btn-imp"/>\
                                 <input type="button" value="delete" class="btn-delete"/>\
                             </td>\
                         </tr>';
-            return html;
-        },
-
-        createRowHtml_cliente: function(cliente) {
-            var html = '<option value="' + cliente.id + '">' + cliente.dni + ' - ' + cliente.nombres + ' ' + cliente.apellidos + '</option>';
             return html;
         },
 
@@ -623,27 +619,7 @@ ReciboService.prototype = {
                 $("#btnUpdate, #btnCancel").show();
             });
         },
-
-        imp: function(sender) {
-            var id = $(sender).closest("tr").attr("data-id");
-            var db = demo.db.getInstance();
-            db.recibos.where("id=" + id).firstOrDefault(function(row_recibo) {
-                cliente_id =  row_recibo.cliente_id;
-                domicilio = row_recibo.domicilio;
-                fecha = row_recibo.fecha;
-                monto_total = row_recibo.monto_total;
-
-                db.clientes.where("id=" + cliente_id).firstOrDefault(function(row_cliente){
-                    c_nombres = row_cliente.nombres;
-                    c_apellidos = row_cliente.apellidos;
-
-                });
-            });
-            alert(monto_total);
-            location.href="reportes_.html?id="+ id +"&cliente_id=" + cliente_id + "&domicilio=" + domicilio + "&fecha=" + fecha + "&total=" + monto_total + "&nombres=" + c_nombres +"&apellidos=" + c_apellidos ;
-        },
-
-    deleteRecibo: function(sender) {
+        deleteRecibo: function(sender) {
             if (!confirm("Esta seguro que desea eliminar este registro?")) {
                 return;
             }
@@ -815,23 +791,3 @@ ConceptoService.prototype = {
         }
     };
 })();
-
-
-
-////////////////////////******* RECIBOS-CONCEPTOS **********/////////////////////
-
-var Recibosconceptos = function () {
-    nova.data.Entity.call(this);
-    this.recibos_id = new Date();
-    this.conceptos_id = new Date();
-    this.monto_concepto = 0;
-};
-
-Recibosconceptos.prototype = new nova.data.Entity();
-Recibosconceptos.constructor = Recibosconceptos;
-
-Recibosconceptos.prototype.updateFrom = function(recibosconceptos) {
-    this.recibos_id = recibosconceptos.recibos_id;
-    this.conceptos_id = recibosconceptos.conceptos_id;
-    this.monto_concepto = recibosconceptos.monto_concepto;
-};
