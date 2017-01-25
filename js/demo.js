@@ -30,7 +30,7 @@ Date.prototype.display = function() {
 })();
 
 
-/* if you want to re-create the DB(due to schema changes, re-init sample data, etc.), 
+/* if you want to re-create the DB(due to schema changes, re-init sample data, etc.),
 change the version parameter on line:
     nova.data.DbContext.call(...);
 */
@@ -449,8 +449,6 @@ ClienteService.prototype = {
 })();
 
 
-
-
 ////////////////////**********  RECIBOS ********** //////////////////
 
 var Recibo = function () {
@@ -533,13 +531,13 @@ ReciboService.prototype = {
 
                 var service = new ClienteService();
                 service.getAll(function(clientes) {
-                    var html1 = "";
-                    for (var i = 0; i < clientes.length; i++) {
-                      html1 += '<option value="' + i + '">' + i  + ' Traer nombre</option>';
-                        //html += obj.createRowHtml_cliente(clientes[i]);
-                    }
-                    $("#txtcliente_id").html(html1);
-                });
+                var html1 = "";
+                for (var i = 0; i < clientes.length; i++) {
+                    //html1 += '<option value="' + i + '">' + i  + ' Traer nombre</option>';
+                    html1 += obj.createRowHtml_cliente(clientes[i]);
+                }
+                $("#txtcliente_id").html(html1);
+            });
 
             this.loadRecibos();
         },
@@ -560,6 +558,7 @@ ReciboService.prototype = {
             var recibo = new Recibo();
             recibo.id = $("#hfId").val() * 1;
             recibo.cliente_id = $("#txtcliente_id").val();
+            //<td>' + recibo.cliente_id + '</td>\
             recibo.domicilio = $("#txtdomicilio").val();
             recibo.fecha = $("#txtfecha").val();
             recibo.monto_total = $("#txtmonto").val();
@@ -584,6 +583,11 @@ ReciboService.prototype = {
                                 <input type="button" value="delete" class="btn-delete"/>\
                             </td>\
                         </tr>';
+            return html;
+        },
+
+        createRowHtml_cliente: function(cliente) {
+            var html = '<option value="' + cliente.id + '">' + cliente.dni + '</option>';
             return html;
         },
 
@@ -628,16 +632,34 @@ ReciboService.prototype = {
 
         imp: function(sender) {
             var id = $(sender).closest("tr").attr("data-id");
-            var url = location.href="reportes_.html?id="+ id;
-            url = unescape(url);
-            url = url.replace(remplaza, " ");
-            url = url.toUpperCase();
+            var db = demo.db.getInstance();
+            db.recibos.where("id=" + id).firstOrDefault(function(row_recibo) {
+                cliente_id =  row_recibo.cliente_id;
+                domicilio = row_recibo.domicilio;
+                fecha = row_recibo.fecha;
+                monto_total = row_recibo.monto_total;
 
-            alert(location.href="reportes_.html?id="+ id);
-            alert(url)
+                db.clientes.where("id=" + cliente_id).firstOrDefault(function(row_cliente){
+                    c_nombres = row_cliente.nombres;
+                    c_apellidos = row_cliente.apellidos;
+
+                });
+            });
+            alert(monto_total);
+            location.href="reportes_.html?id="+ id +"&cliente_id=" + cliente_id + "&domicilio=" + domicilio + "&fecha=" + fecha + "&total=" + monto_total + "&nombres=" + c_nombres +"&apellidos=" + c_apellidos ;
         },
 
-        deleteRecibo: function(sender) {
+        showCliente: function(cliente_id) {
+            var service = new ClienteService();
+            //var db = demo.db.getInstance();
+            db.clientes.where("id=" + cliente_id).firstOrDefault(function(row_cliente) {
+                cliente_id =  row_cliente.cliente_id;
+            });
+           // alert("este alert");
+
+    },
+
+    deleteRecibo: function(sender) {
             if (!confirm("Esta seguro que desea eliminar este registro?")) {
                 return;
             }
