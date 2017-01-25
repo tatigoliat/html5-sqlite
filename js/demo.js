@@ -35,7 +35,7 @@ change the version parameter on line:
     nova.data.DbContext.call(...);
 */
 DemoDbContext = function () {
-    nova.data.DbContext.call(this, "recibos4", 1, "recibos4", 1000001);
+    nova.data.DbContext.call(this, "recibos0", 1, "recibos0", 1000001);
    // nova.data.DbContext.call(this, "DB Prueba", 0.1, "Database Prueba", 1);
 
     this.logSqls = true;
@@ -44,6 +44,8 @@ DemoDbContext = function () {
     this.clientes = new nova.data.Repository(this, Cliente, "clientes");
     this.recibos = new nova.data.Repository(this, Recibo, "recibos");
     this.conceptos = new nova.data.Repository(this, Concepto, "conceptos");
+    this.recibosconceptos = new nova.data.Repository(this, Recibosconceptos, "recibosconceptos");
+
 };
 
 DemoDbContext.prototype = new nova.data.DbContext();
@@ -525,6 +527,9 @@ ReciboService.prototype = {
             $(".btn-edit").live("click", function() {
                 obj.edit(this);
             });
+            $(".btn-imp").live("click", function() {
+                obj.imp(this);
+            });
 
                 var service = new ClienteService();
                 service.getAll(function(clientes) {
@@ -575,6 +580,7 @@ ReciboService.prototype = {
                             <td>' + recibo.monto_total + '</td>\
                             <td>\
                                 <input type="button" value="edit" class="btn-edit"/>\
+                                <input type="button" value="Imprimir" class="btn-imp"/>\
                                 <input type="button" value="delete" class="btn-delete"/>\
                             </td>\
                         </tr>';
@@ -619,6 +625,18 @@ ReciboService.prototype = {
                 $("#btnUpdate, #btnCancel").show();
             });
         },
+
+        imp: function(sender) {
+            var id = $(sender).closest("tr").attr("data-id");
+            var url = location.href="reportes_.html?id="+ id;
+            url = unescape(url);
+            url = url.replace(remplaza, " ");
+            url = url.toUpperCase();
+
+            alert(location.href="reportes_.html?id="+ id);
+            alert(url)
+        },
+
         deleteRecibo: function(sender) {
             if (!confirm("Esta seguro que desea eliminar este registro?")) {
                 return;
@@ -791,3 +809,23 @@ ConceptoService.prototype = {
         }
     };
 })();
+
+
+
+////////////////////////******* RECIBOS-CONCEPTOS **********/////////////////////
+
+var Recibosconceptos = function () {
+    nova.data.Entity.call(this);
+    this.recibos_id = new Date();
+    this.conceptos_id = new Date();
+    this.monto_concepto = 0;
+};
+
+Recibosconceptos.prototype = new nova.data.Entity();
+Recibosconceptos.constructor = Recibosconceptos;
+
+Recibosconceptos.prototype.updateFrom = function(recibosconceptos) {
+    this.recibos_id = recibosconceptos.recibos_id;
+    this.conceptos_id = recibosconceptos.conceptos_id;
+    this.monto_concepto = recibosconceptos.monto_concepto;
+};
