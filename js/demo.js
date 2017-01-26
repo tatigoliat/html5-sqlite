@@ -568,7 +568,6 @@ ReciboService.prototype = {
         createRowHtml: function(recibo) {
             var html = '<tr data-id=' + recibo.id + '>\
                             <td>' + recibo.cliente_id + '</td>\
-                            <td>' + recibo.domicilio + '</td>\
                             <td>' + recibo.fecha + '</td>\
                             <td>' + recibo.monto_total + '</td>\
                             <td>\
@@ -607,7 +606,6 @@ ReciboService.prototype = {
         },
         reset: function() {
             $("#txtcliente_id").val("");
-            $("#txtdomicilio").val("");
             $("#txtfecha").val("");
             $("#txtmonto").val("");
             $("#btnAdd").show();
@@ -629,17 +627,17 @@ ReciboService.prototype = {
             var db = demo.db.getInstance();
             db.recibos.where("id=" + id).firstOrDefault(function(row_recibo) {
                 cliente_id =  row_recibo.cliente_id;
-                domicilio = row_recibo.domicilio;
                 fecha = row_recibo.fecha;
                 monto_total = row_recibo.monto_total;
 
                 db.clientes.where("id=" + cliente_id).firstOrDefault(function(row_cliente){
                     c_nombres = row_cliente.nombres;
                     c_apellidos = row_cliente.apellidos;
+                    c_domicilio = row_cliente.domicilio;
 
                 });
             });
-            location.href="reportes_.html?id="+ id +"&cliente_id=" + cliente_id + "&domicilio=" + domicilio + "&fecha=" + fecha + "&total=" + monto_total + "&nombres=" + c_nombres +"&apellidos=" + c_apellidos ;
+            location.href="reportes_.html?id="+ id +"&cliente_id=" + cliente_id + "&domicilio=" + c_domicilio + "&fecha=" + fecha + "&total=" + monto_total + "&nombres=" + c_nombres +"&apellidos=" + c_apellidos ;
         },
 
     deleteRecibo: function(sender) {
