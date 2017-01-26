@@ -51,7 +51,7 @@
 
     <section id="intro" class="wrapper style1 fade-up">
         <div class="inner">
-            <h1>Registro de Clientes</h1>
+            <h1>Registro de Recibos</h1>
             <p>Ingrese la información requerida</p>
             <ul class="actions">
                 <li><a href="index.html" class="button scrolly">Volver</a></li>
@@ -59,74 +59,104 @@
         </div>
 
 
-        <h3>Crear nuevo Recibo</h3>
+        <h2>Crear nuevo Recibo</h2>
         <br/>
 
         <form action="/" method="POST" id="formEdit">
-            <div>
+            <div class="row uniform">
                 <input type="hidden" name="id" value="0" id="hfId"/>
 
-                Seleccione un cliente:
-                <select id="txtcliente_id" name="txtcliente_id"></select>
 
-                <div>
-                    Ingrese una fecha:
-                    <input type="date" id="txtfecha" name="txtfecha" placeholder="Fecha">
-                    <span class="ccform-addon"><i class="fa fa-calendar fa-2x"></i></span>
-                    <!--<input type="text" id="txtcliente_id" name="txtcliente_id" placeholder="txtcliente_id">-->
+                <div class="12u$">
+                    <div class="select-wrapper">
+                        <h5>Seleccione un cliente:</h5>
+                        <select id="txtcliente_id" name="txtcliente_id"></select>
+                    </div>
                 </div>
 
-                <br/>
-                <a id="agregarCampo" class="btn btn-info" href="#">Agregar Concepto</a>
-                <div id="contenedor">
-                    <div class="added">
-                        Seleccione un concepto<select>
+                <div class="6u 12u$(xsmall)">
+                    <h5>Ingrese una fecha:</h5>
+                    <input type="date" id="txtfecha" name="txtfecha" placeholder="Fecha">
+                    <span class="ccform-addon"><i class="fa fa-calendar fa-2x"></i></span>
+                </div>
+
+
+                <div id="contenedor" class="12u$">
+                    <a id="agregarCampo" class="btn btn-info" href="#">Agregar Concepto</a>
+                    <div class="6u 12u$(xsmall)">
+                        <h5>Seleccione un concepto</h5>
+                        <select >
                         <option value="volvo">Concepto 1</option>
                         <option value="saab">Concepto 2</option>
                         <option value="mercedes">Concepto 3</option>
                         <option value="audi">Concepto 4</option>
                         <option value="audi">Concepto 5</option>
-                    </select>
-                        <br/>
+                        </select>
+                    </div>
+                    <div class="6u 12u$(xsmall)">
                         <input type="text" name="mitexto[]" id="campo_1" placeholder="Ingrese el monto correspondiente concepto 1"/><a href="#" class="eliminar"></a>
                     </div>
                 </div>
 
-                <div class="ccfield-prepend">
-                    <span class="ccform-addon"><i class="fa fa-money fa-2x"></i></span>
-                    <input class="ccformfield" type="text" id="txtmonto" placeholder="Monto Total" onkeypress="return valida(event);" value="0">
+                <div class="4u 12u$(small)">
+                    <input type="checkbox" id="iva" name="iva" checked>
+                    <label for="iva">Aplica I.V.A.</label>
+                </div>
+                <div class="4u$ 12u$(small)">
+                    <input type="checkbox" id="irpf" name="irpf" checked>
+                    <label for="irpf">Aplica I.R.P.F.</label>
                 </div>
 
-                <div>
-                    <input type="button" value="Add" id="btnAdd"/>
-                    <input type="button" value="Update" id="btnUpdate" class="hide"/>
-                    <input type="reset" value="Cancel" id="btnCancel" class="hide"/>
+                <div class="2u 10u$(xsmall)">
+                    <span><i class="fa fa-money fa-2x"></i></span>
+                    <input class="ccformfield" type="text" id="txtmonto" placeholder="Monto Total" READONLY VALUE="0" >
+                </div>
+
+                <div class="12u$">
+                    <ul class="actions">
+                        <li><input type="button" value="Add" id="btnAdd" class="special"/></li>
+                        <li><input type="button" value="Update" id="btnUpdate" /></li>
+                        <li><input type="reset" value="Cancel" id="btnCancel" /></li>
+                    </ul>
                 </div>
             </div>
 
         </form>
 
-        <table class="data">
-            <thead>
-            <tr>
-                <th>DNI</th>
-                <th>Fecha</th>
-                <th>Total</th>
-            </tr>
-            </thead>
-            <tbody id="recibos">
-            <tr>
-                <td> - </td>
-                <td> - </td>
-                <td> - </td>
+        <section>
+            <hr />
+            <h4>Registro almacenados</h4>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                    <tr>
+                        <th align="center">DNI</th>
+                        <th align="center">Fecha</th>
+                        <th align="center">Total</th>
+                        <th align="center">Opciones</th>
+                    </tr>
+                    </thead>
 
-                <td>
-                    <input type="button" value="edit" class="btn-edit"/>
-                    <input type="button" value="delete" class="btn-delete"/>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+                    <tbody id="recibos">
+                    <tr>
+                        <td> - </td>
+                        <td> - </td>
+                        <td> - </td>
+                        <td> - </td>
+                        <td>
+                            <div class="12u$">
+                                <ul class="actions">
+                                    <input type="button" value="edit" class="btn-edit" />
+                                    <input type="button" value="delete" class="btn-delete"/>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
 </div>
 
 </div>
@@ -163,7 +193,7 @@
             {
                 FieldCount++;
                 //agregar campo
-                $(contenedor).append('<div><input type="text" name="mitexto[]" id="campo_'+ FieldCount +'" placeholder="Ingrese el monto correspondiente '+ FieldCount +'"/><a href="#" class="eliminar">&times;</a></div>');
+                $(contenedor).append('<div class="6u 12u$(xsmall)"><input type="text" name="mitexto[]" id="campo_'+ FieldCount +'" placeholder="Ingrese el monto correspondiente '+ FieldCount +'"/><a href="#" class="eliminar">&times;</a></div>');
                 x++; //text box increment
             }
             return false;

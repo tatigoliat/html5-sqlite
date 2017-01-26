@@ -35,7 +35,7 @@ change the version parameter on line:
     nova.data.DbContext.call(...);
 */
 DemoDbContext = function () {
-    nova.data.DbContext.call(this, "recibos0", 1, "recibos0", 1000001);
+    nova.data.DbContext.call(this, "1recibos", 1, "1recibos", 1000001);
    // nova.data.DbContext.call(this, "DB Prueba", 0.1, "Database Prueba", 1);
 
     this.logSqls = true;
@@ -451,6 +451,8 @@ var Recibo = function () {
     this.domicilio = "";
     this.fecha = "";
     this.monto_total = 0;
+    this.iva = new Date();
+    this.irpf  = new Date();
 };
 
 Recibo.prototype = new nova.data.Entity();
@@ -461,6 +463,8 @@ Recibo.prototype.updateFrom = function(recibo) {
     this.domicilio = recibo.domicilio;
     this.fecha = recibo.fecha;
     this.monto_total =  recibo.monto_total;
+    this.iva = recibo.iva;
+    this.irpf = recibo.irpf;
 };
 
 var ReciboService = function() {
