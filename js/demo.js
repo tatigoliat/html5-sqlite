@@ -527,6 +527,10 @@ ReciboService.prototype = {
                 obj.imp(this);
             });
 
+            $(".btn-conc").live("click", function() {
+                obj.conc(this);
+            });
+
                 var service = new ClienteService();
                 service.getAll(function(clientes) {
                 var html1 = "";
@@ -577,6 +581,7 @@ ReciboService.prototype = {
                             <td>\
                                 <input type="button" value="edit" class="btn-edit"/>\
                                 <input type="button" value="Imprimir" class="btn-imp"/>\
+                                <input type="button" value="+  Conceptos" class="btn-conc"/>\
                                 <input type="button" value="delete" class="btn-delete"/>\
                             </td>\
                         </tr>';
@@ -642,6 +647,11 @@ ReciboService.prototype = {
                 });
             });
             location.href="reportes_.html?id="+ id +"&cliente_id=" + cliente_id + "&domicilio=" + c_domicilio + "&fecha=" + fecha + "&total=" + monto_total + "&nombres=" + c_nombres +"&apellidos=" + c_apellidos ;
+        },
+
+        conc: function(sender) {
+            var id_recibo = $(sender).closest("tr").attr("data-id");
+            location.href="agregar_conceptos.html?id="+ id_recibo;
         },
 
     deleteRecibo: function(sender) {
@@ -817,8 +827,6 @@ ConceptoService.prototype = {
     };
 })();
 
-
-
 ////////////////////////******* RECIBOS-CONCEPTOS **********/////////////////////
 
 var Recibosconceptos = function () {
@@ -836,3 +844,97 @@ Recibosconceptos.prototype.updateFrom = function(recibosconceptos) {
     this.conceptos_id = recibosconceptos.conceptos_id;
     this.monto_concepto = recibosconceptos.monto_concepto;
 };
+
+
+var Recibosconceptos = function() {
+};
+
+Recibosconceptos.prototype = {
+    getAll: function (callback) {
+        demo.db.getInstance().conceptos.toArray(callback);
+    },
+    add:function(recibosconcepto, callback) {
+        var db = demo.db.getInstance();
+        db.recibosconceptos.add(recibosconcepto);
+        db.saveChanges(callback);
+    },
+    deleteConcepto:function(id, callback) {
+        var db = demo.db.getInstance();
+        db.conceptos.removeByWhere("id=" + id, callback);
+    },
+    update:function(recibosconcepto, callback) {
+        var db = demo.db.getInstance();
+        db.recibosconceptos.where("id=" + recibosconcepto.id).firstOrDefault(function(dbRecibosconceptoos) {
+            dbRecibosconceptoos.updateFrom(recibosconcepto);
+            db.recibosconcepto.update(dbRecibosconceptoos);
+            db.saveChanges(function() {
+                callback && callback();
+            });
+        });
+    },
+    get:function(id, callback) {
+        demo.db.getInstance().recibosconceptos.firstOrDefault(callback, "id=" + id);
+    }
+};
+
+(function() {
+    demo.pages.Recibosconceptos = function() {
+
+    };
+
+    demo.pages.Recibosconceptos.prototype = {
+        onLoaded: function() {
+            var obj = this;
+            $("#btnAdd").click(function() {
+                obj.add();
+            });
+            $("#btnUpdate").click(function() {
+                obj.update();
+            });
+            $("#btnCancel").click(function() {
+                obj.reset();
+            });
+            $(".btn-delete").live("click", function() {
+                obj.deleteConcepto(this);
+            });
+            $(".btn-edit").live("click", function() {
+                obj.edit(this);
+            });
+
+            this.loadRecibosconceptos();
+        },
+
+
+        loadRecibosconceptos: function(getVar) {
+            var obj = "recibir variable";
+
+                $("#recibosconceptos_id").html(obj);
+        },
+        parseRecibosconceptos: function() {
+
+            return recibosconcepto;
+        },
+        bindForm: function (recibosconcepto) {
+
+        },
+        createRowHtml: function(recibosconcepto) {
+           
+        },
+
+        add: function() {
+           
+        },
+        update: function() {
+           
+        },
+        reset: function() {
+          
+        },
+        edit: function(sender) {
+           
+        },
+        deleteConcepto: function(sender) {
+          
+        }
+    };
+})();
