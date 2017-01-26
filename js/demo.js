@@ -639,7 +639,6 @@ ReciboService.prototype = {
 
                 });
             });
-            alert(monto_total);
             location.href="reportes_.html?id="+ id +"&cliente_id=" + cliente_id + "&domicilio=" + domicilio + "&fecha=" + fecha + "&total=" + monto_total + "&nombres=" + c_nombres +"&apellidos=" + c_apellidos ;
         },
 
