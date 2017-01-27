@@ -5,7 +5,7 @@
 -->
 <html>
 <head>
-    <title>Gestión de Recibos</title>
+    <title>Gestión Gestor de Recibos</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
@@ -30,6 +30,35 @@
             patron =/[0-9]/;
             tecla_final = String.fromCharCode(tecla);
             return patron.test(tecla_final);
+        }
+
+        function sumar()
+        {
+            var suma_total = 0;
+            
+            var x = $("#contenedor div").length;
+            var FieldCount = x-1; //para el seguimiento de los campos
+
+            for(i = 1; i<x; i++){
+                var suma = $("#campo_"+i).val();
+                if (suma != ""){
+                    suma_total += parseFloat(suma);
+                }
+            }
+
+            /* Para obtener el valor */
+            /*if($("#campo_1").val() != "" && $("#campo_1").val() != 0){
+                suma1 = parseFloat($("#campo_1").val());
+            } else {
+                suma1 = 0;
+            }*/
+
+            //suma_total = 0;
+
+
+
+            $("#txtmonto").val(suma_total);
+            
         }
     </script>
 </head>
@@ -57,9 +86,10 @@
                 <li><a href="index.html" class="button scrolly">Volver</a></li>
             </ul>
         </div>
+    </section>
 
 
-        <h2>Crear nuevo Recibo</h2>
+        <h3>Crear nuevo Recibo</h3>
         <br/>
 
         <form action="/" method="POST" id="formEdit">
@@ -74,29 +104,24 @@
                     </div>
                 </div>
 
+
                 <div class="6u 12u$(xsmall)">
                     <h5>Ingrese una fecha:</h5>
                     <input type="date" id="txtfecha" name="txtfecha" placeholder="Fecha">
                     <span class="ccform-addon"><i class="fa fa-calendar fa-2x"></i></span>
                 </div>
 
-
-                <div id="contenedor" class="12u$">
-                    <a id="agregarCampo" class="btn btn-info" href="#">Agregar Concepto</a>
-                    <div class="6u 12u$(xsmall)">
-                        <h5>Seleccione un concepto</h5>
-                        <select >
-                        <option value="volvo">Concepto 1</option>
-                        <option value="saab">Concepto 2</option>
-                        <option value="mercedes">Concepto 3</option>
-                        <option value="audi">Concepto 4</option>
-                        <option value="audi">Concepto 5</option>
+                <!--<a id="agregarCampo" class="btn btn-info" href="#">Agregar Concepto</a>-->
+                <div id="contenedor">
+                    <div class="added">
+                       
+                         Seleccione un Concepto: 
+                        <select id="txtconcepto_id" name="txtconcepto_id">
                         </select>
+            
+                        <br/><br/>
                     </div>
-                    <div class="6u 12u$(xsmall)">
-                        <input type="text" name="mitexto[]" id="campo_1" placeholder="Ingrese el monto correspondiente concepto 1"/><a href="#" class="eliminar"></a>
-                    </div>
-                </div>
+                </div>         
 
                 <div class="4u 12u$(small)">
                     <input type="checkbox" id="chck_iva" name="chck_iva" checked>
@@ -122,7 +147,6 @@
             </div>
 
         </form>
-
         <section>
             <hr />
             <h4>Registro almacenados</h4>
@@ -178,7 +202,7 @@
     });
 
 
-    $(document).ready(function() {
+   /* $(document).ready(function() {
 
         var MaxInputs       = 8; //Número Maximo de Campos
         var contenedor       = $("#contenedor"); //ID del contenedor
@@ -193,7 +217,7 @@
             {
                 FieldCount++;
                 //agregar campo
-                $(contenedor).append('<div class="6u 12u$(xsmall)"><input type="text" name="mitexto[]" id="campo_'+ FieldCount +'" placeholder="Ingrese el monto correspondiente '+ FieldCount +'"/><a href="#" class="eliminar">&times;</a></div>');
+                $(contenedor).append('<div><input type="text" name="mitexto[]" id="campo_'+ FieldCount +'" placeholder="Ingrese el monto correspondiente '+ FieldCount +'"/><a href="#" class="eliminar">&times;</a></div>');
                 x++; //text box increment
             }
             return false;
@@ -203,9 +227,10 @@
             if( x > 1 ) {
                 $(this).parent('div').remove(); //eliminar el campo
                 x--;
+                FieldCount--;
             }
             return false;
         });
-    });
+    });*/
 </script>
 </html>
